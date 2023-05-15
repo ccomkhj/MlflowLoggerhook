@@ -252,7 +252,8 @@ class MlflowLoggerHook(Hook):
                 runner, batch_idx, 'val')
             runner.logger.info(log_str)
 
-            self.mlflow.log_metrics(tag, step=self.get_iter(runner))
+            self.mlflow.log_metrics(tag, step=batch_idx)
+
 
     def after_test_iter(self,
                         runner,
@@ -299,6 +300,7 @@ class MlflowLoggerHook(Hook):
                 epoch = runner.epoch
             runner.visualizer.add_scalars(
                 tag, step=epoch, file_path=self.json_log_path)
+            self.mlflow.log_metrics(tag, step=epoch)
         else:
             if (isinstance(runner._train_loop, dict)
                     or runner._train_loop is None):
@@ -307,6 +309,8 @@ class MlflowLoggerHook(Hook):
                 iter = runner.iter
             runner.visualizer.add_scalars(
                 tag, step=iter, file_path=self.json_log_path)
+
+            self.mlflow.log_metrics(tag, step=iter)
 
     def after_test_epoch(self,
                          runner,
